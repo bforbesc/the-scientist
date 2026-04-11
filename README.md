@@ -4,77 +4,43 @@
 
 A fully automated monthly newsletter that discovers and curates the brightest ML/AI papers for practitioners. Posted to Slack. Zero human input required after setup.
 
-## How It Works
+**Why 3 layers?** No single signal is reliable alone. Keywords miss novelty ("Transformers" wasn't a keyword before it existed). HF trends miss niche infra work. Recommendations only find work similar to the canon. Together they catch ~90-95% of what a human expert would pick.
 
-```
-LAYER 1: arXiv API + Semantic Scholar keyword search
-         (illuminates papers on known topics)
-                    +
-LAYER 2: Hugging Face Daily Papers API
-         (reveals what the ML community is excited about NOW)
-                    +
-LAYER 3: Semantic Scholar Recommendations API
-         (seeded with 20 landmark papers — discovers conceptually similar new work)
-                    ↓
-         ~600-1000 candidates (deduplicated)
-                    ↓
-         Pre-filter & score
-         (institutions, categories, key authors, HF upvotes, citations)
-                    ↓
-         Top 60 candidates → Claude API
-         (selects 12 brightest, ranks, writes practitioner summaries)
-                    ↓
-         Formatted newsletter → Slack webhook
-```
+## How It's Deployed
 
-### Why 3 Layers?
+Runs on **GitHub Actions** — automated monthly trigger (1st of month, 9am UTC). You can also manually trigger it from the **Actions** tab.
 
-No single beacon reveals the whole sky:
-- **Keywords miss novelty** — "Transformers" wasn't a keyword before Transformers existed
-- **Social signals miss niche work** — important infra papers don't always trend on HF
-- **Recommendations miss unrelated breakthroughs** — only finds work similar to the canon
+The workflow:
+1. Checks out the repo
+2. Installs Python + dependencies
+3. Reads secrets from GitHub → env vars
+4. Runs `pipeline.py`
+5. Archives the newsletter to artifacts
 
-Together they uncover ~90-95% of what a human expert curator would spotlight.
+## Setup
 
-## Setup (~15 minutes)
+### 1. Set Up Slack Incoming Webhook
 
-### 1. Create a Slack Incoming Webhook
+- Go to https://api.slack.com/apps → **Create New App** → **From scratch**
+- Name: "The Scientist"
+- **Incoming Webhooks** → Toggle ON → **Add New Webhook to Workspace**
+- Pick your channel, copy the webhook URL
 
-1. Go to https://api.slack.com/apps → **Create New App** → **From scratch**
-2. Name it "The Scientist", pick your workspace
-3. **Incoming Webhooks** → Toggle ON → **Add New Webhook to Workspace**
-4. Pick the channel (e.g., `#the-scientist`) → Copy the webhook URL
+### 2. Add GitHub Secrets
 
-### 2. Get API Keys
+Repo → **Settings** → **Secrets and variables** → **Actions**. Add these:
 
-| Key | Where | Required? |
-|-----|-------|-----------|
-| Anthropic API Key | https://console.anthropic.com/settings/keys | Yes |
-| Semantic Scholar API Key | https://www.semanticscholar.org/product/api#api-key-form | Recommended (free, 10x rate limit) |
+| Secret | Source |
+|--------|--------|
+| `ANTHROPIC_API_KEY` | https://console.anthropic.com/settings/keys |
+| `SLACK_WEBHOOK_URL` | From Slack webhook (step 1) |
+| `S2_API_KEY` | https://www.semanticscholar.org/product/api (optional — free, 10x rate limit) |
 
-### 3. Create GitHub Repo
+### 3. Test It
 
-```bash
-git init the-scientist && cd the-scientist
-# Copy: pipeline.py, sources.yaml, requirements.txt, .github/workflows/newsletter.yml
-git add . && git commit -m "Initial setup"
-git remote add origin <your-repo-url>
-git push -u origin main
-```
+**Actions** tab → **The Scientist — Monthly Newsletter** → **Run workflow** → watch logs.
 
-### 4. Add Secrets
-
-Repo → **Settings** → **Secrets and variables** → **Actions**:
-
-| Secret | Value |
-|--------|-------|
-| `ANTHROPIC_API_KEY` | Your Anthropic key |
-| `SLACK_WEBHOOK_URL` | Your Slack webhook URL |
-| `S2_API_KEY` | Semantic Scholar key (optional) |
-
-### 5. Test
-
-**Actions** tab → **The Scientist** → **Run workflow** → watch logs.
+The pipeline will fetch ~600-1000 papers, rank them, and post to Slack.
 
 ## Customization
 
@@ -88,22 +54,41 @@ Tune your observatory with `sources.yaml`:
 - `venue_prestige` — how venues are scored
 - `newsletter.size` — papers per issue (default: 12)
 
+## Architecture
+
+**3-layer fetch → pre-filter → Claude ranks → Slack post**
+
+| Layer | Source | Why |
+|-------|--------|-----|
+| 1 | arXiv + Semantic Scholar keywords | Catches papers on known topics |
+| 2 | Hugging Face Daily Papers | Catches what practitioners care about NOW (social signal) |
+| 3 | S2 Recommendations (seeded) | Finds conceptually similar work that keywords miss |
+
+Deduped → scored by institution, authors, citations, velocity, HF upvotes → top 60 sent to Claude → Claude selects 12 best + ranks + summarizes → posted to Slack.
+
+## Customization
+
+All curated sources live in `sources.yaml`:
+- `trusted_institutions` — orgs that get a scoring boost
+- `key_authors` — researchers to always watch
+- `categories` — practitioner categories + keywords
+- `search_queries` — Layer 1 keyword searches
+- `seed_papers` — Layer 3 landmark papers for recommendations
+- `venue_prestige` — how venues are scored
+- `newsletter.size` — papers per issue (default: 12)
+
 ## Cost Per Run
 
-- Claude API: ~$0.15-0.25 (one Sonnet call)
-- Semantic Scholar: free
-- arXiv: free
-- HF Daily Papers: free
-- GitHub Actions: free (~4 min/month)
+- **Claude API**: ~$0.15-0.25 per month (one Sonnet call)
+- Everything else: free (arXiv, Semantic Scholar, HF, GitHub Actions)
 
 ## Files
 
-```
-├── pipeline.py                    # Full 3-layer pipeline
-├── sources.yaml                   # Source curation config
-├── requirements.txt               # pyyaml
-├── latest_issue.json              # Most recent issue (auto-generated)
-├── SOURCE_CURATION_ANALYSIS.md    # How the sources were chosen
-└── .github/workflows/
-    └── newsletter.yml             # Monthly cron (1st of each month, 9am UTC)
-```
+| File | Purpose |
+|------|---------|
+| `pipeline.py` | Core 3-layer pipeline + pre-filtering + Claude API call |
+| `sources.yaml` | All editorial decisions (institutions, authors, keywords, venues) |
+| `requirements.txt` | Just `pyyaml` |
+| `latest_issue.json` | Most recent newsletter (auto-generated) |
+| `.github/workflows/newsletter.yml` | Cron job + secrets injection |
+| `SOURCE_CURATION_ANALYSIS.md` | How the sources were chosen |
