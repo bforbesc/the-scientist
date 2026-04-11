@@ -1,0 +1,38 @@
+name: The Scientist — Monthly Newsletter
+
+on:
+  # Runs on the 1st of every month at 9am UTC
+  schedule:
+    - cron: '0 9 1 * *'
+
+  # Manual trigger for testing
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Run pipeline
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          S2_API_KEY: ${{ secrets.S2_API_KEY }}
+        run: python pipeline.py
+
+      - name: Archive newsletter issue
+        uses: actions/upload-artifact@v4
+        with:
+          name: newsletter-${{ github.run_id }}
+          path: latest_issue.json
+          retention-days: 90

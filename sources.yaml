@@ -1,0 +1,269 @@
+# ─────────────────────────────────────────────────────────────────────
+# THE SCIENTIST — Source Curation Config (v2 — 3-Layer Strategy)
+# ─────────────────────────────────────────────────────────────────────
+# Layer 1: arXiv + Semantic Scholar keyword search (known topics)
+# Layer 2: Hugging Face Daily Papers (social signal / novelty)
+# Layer 3: Semantic Scholar Recommendations (conceptual discovery)
+# ─────────────────────────────────────────────────────────────────────
+
+# ── 1. arXiv Categories ─────────────────────────────────────────────
+arxiv_categories:
+  - cs.CL   # Computation and Language — LLMs, NLP, RAG
+  - cs.LG   # Machine Learning — training, architectures
+  - cs.AI   # Artificial Intelligence — agents, reasoning
+  - cs.IR   # Information Retrieval — search, embeddings
+  - cs.DC   # Distributed Computing — infra (vLLM, DeepSpeed)
+  - cs.SE   # Software Engineering — code gen, SWE-bench
+
+# ── 2. Trusted Institutions ─────────────────────────────────────────
+trusted_institutions:
+  tier_1:
+    - OpenAI
+    - Google DeepMind
+    - Google
+    - Meta AI
+    - Anthropic
+    - Microsoft Research
+  tier_2:
+    - Stanford University
+    - UC Berkeley
+    - Carnegie Mellon
+    - MIT
+    - Allen Institute for AI
+    - NVIDIA
+    - DeepSeek
+  tier_3:
+    - Hugging Face
+    - Mistral AI
+    - Cohere
+    - EleutherAI
+    - Princeton University
+    - University of Washington
+    - ETH Zurich
+    - Tsinghua University
+    - University of Toronto
+    - Mila
+    - Shanghai AI Laboratory
+    - Alibaba DAMO Academy
+    - Together AI
+    - Databricks
+    - Mosaic ML
+    - xAI
+    - Apple
+
+# ── 3. Key Authors ──────────────────────────────────────────────────
+key_authors:
+  - Tri Dao
+  - Edward Hu
+  - Percy Liang
+  - Omar Khattab
+  - Lianmin Zheng
+  - Hugo Touvron
+  - Jason Wei
+  - Noam Shazeer
+  - Ashish Vaswani
+  - Ilya Sutskever
+  - Alec Radford
+  - Dario Amodei
+  - Chris Olah
+  - Tom Brown
+  - Matei Zaharia
+  - Carlos Guestrin
+  - Sebastian Raschka
+
+# ── 4. Practitioner Categories ───────────────────────────────────────
+categories:
+  infra_and_mlops:
+    label: "Infra & MLOps"
+    keywords:
+      - inference optimization
+      - serving
+      - deployment
+      - distributed training
+      - mlops
+      - latency
+      - throughput
+      - quantization
+      - pruning
+      - distillation
+      - KV cache
+      - speculative decoding
+      - tensor parallelism
+      - vllm
+      - tensorrt
+      - deepspeed
+      - paged attention
+  modeling:
+    label: "Modeling & Architecture"
+    keywords:
+      - architecture
+      - transformer
+      - attention mechanism
+      - foundation model
+      - pretraining
+      - scaling law
+      - mixture of experts
+      - state space model
+      - mamba
+      - multimodal
+      - vision language
+      - long context
+      - context window
+      - sparse attention
+      - linear attention
+  training:
+    label: "Training & Alignment"
+    keywords:
+      - fine-tuning
+      - finetuning
+      - RLHF
+      - DPO
+      - alignment
+      - reward model
+      - instruction tuning
+      - PEFT
+      - LoRA
+      - adapter
+      - post-training
+      - preference optimization
+      - constitutional AI
+      - continual learning
+  evaluation:
+    label: "Evaluation & Safety"
+    keywords:
+      - benchmark
+      - evaluation
+      - leaderboard
+      - hallucination
+      - faithfulness
+      - robustness
+      - red team
+      - safety
+      - toxicity
+      - contamination
+      - MMLU
+      - HumanEval
+      - SWE-bench
+  rag_and_retrieval:
+    label: "RAG & Retrieval"
+    keywords:
+      - retrieval augmented generation
+      - RAG
+      - embedding
+      - vector search
+      - vector database
+      - semantic search
+      - chunking
+      - reranking
+      - dense retrieval
+      - hybrid search
+      - FAISS
+      - ColBERT
+  agents_and_tools:
+    label: "Agents & Tools"
+    keywords:
+      - agent
+      - tool use
+      - function calling
+      - planning
+      - chain of thought
+      - reasoning
+      - code generation
+      - agentic
+      - multi-agent
+      - orchestration
+      - MCP
+      - computer use
+      - browser agent
+  data_engineering:
+    label: "Data Engineering"
+    keywords:
+      - dataset
+      - synthetic data
+      - data generation
+      - annotation
+      - data curation
+      - data filtering
+      - deduplication
+      - data quality
+      - data pipeline
+      - tokenization
+      - data mixing
+      - feature engineering
+
+# ── 5. Venue Prestige Scores ────────────────────────────────────────
+venue_prestige:
+  NeurIPS: 10
+  ICML: 10
+  ICLR: 10
+  Nature: 10
+  Science: 10
+  ACL: 9
+  EMNLP: 9
+  CVPR: 9
+  JMLR: 9
+  OSDI: 9
+  SOSP: 9
+  NAACL: 8
+  AAAI: 8
+  TACL: 8
+  COLM: 8
+  MLSys: 8
+  EuroSys: 8
+  NSDI: 8
+  ArXiv: 5
+  CoRR: 5
+  default: 3
+
+# ── 6. Search Queries (Layer 1) ─────────────────────────────────────
+search_queries:
+  - "large language model inference optimization"
+  - "retrieval augmented generation"
+  - "LLM agents tool use function calling"
+  - "fine-tuning alignment RLHF DPO"
+  - "transformer architecture efficient scaling"
+  - "LLM evaluation benchmark hallucination"
+  - "vector embedding retrieval search"
+  - "synthetic data generation language model"
+  - "MLOps machine learning deployment serving"
+  - "code generation language model programming"
+  - "multimodal vision language model"
+  - "model quantization distillation pruning"
+  - "chain of thought reasoning LLM"
+  - "data pipeline feature engineering ML"
+  - "mixture of experts scaling"
+  - "long context window transformer"
+  - "LLM safety red teaming"
+  - "agentic workflow orchestration AI"
+
+# ── 7. Seed Papers (Layer 3 — S2 Recommendations) ──────────────────
+seed_papers:
+  - "arxiv:1706.03762"   # Attention Is All You Need
+  - "arxiv:1810.04805"   # BERT
+  - "arxiv:2005.14165"   # GPT-3
+  - "arxiv:2005.11401"   # RAG
+  - "arxiv:2106.09685"   # LoRA
+  - "arxiv:2203.02155"   # InstructGPT / RLHF
+  - "arxiv:2205.14135"   # Flash Attention
+  - "arxiv:2302.13971"   # LLaMA
+  - "arxiv:2305.18290"   # DPO
+  - "arxiv:2401.04088"   # Mixtral
+  - "arxiv:2310.06770"   # SWE-bench
+  - "arxiv:2305.15334"   # Gorilla (tool use)
+  - "arxiv:2309.06180"   # vLLM / PagedAttention
+  - "arxiv:2310.03714"   # DSPy
+  - "arxiv:2212.08073"   # Constitutional AI
+  - "arxiv:2407.21783"   # Llama 3
+  - "arxiv:2405.04434"   # DeepSeek-V2
+  - "arxiv:2201.11903"   # Chain of Thought
+  - "arxiv:2210.03629"   # ReAct
+  - "arxiv:2302.04761"   # Toolformer
+
+# ── 8. Newsletter Settings ──────────────────────────────────────────
+newsletter:
+  name: "The Scientist"
+  size: 12
+  lookback_days: 35
+  min_abstract_length: 100
+  model: "claude-sonnet-4-20250514"
+  candidates_for_claude: 60
