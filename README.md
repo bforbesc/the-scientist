@@ -92,3 +92,7 @@ All editorial decisions live in `sources.yaml`:
 | `latest_issue.json` | Most recent newsletter (auto-generated) |
 | `.github/workflows/newsletter.yml` | Cron job + secrets injection |
 | `SOURCE_CURATION_ANALYSIS.md` | How the sources were chosen |
+
+---
+
+Made with love by [@bforbesc](https://github.com/bforbesc) and Claudia ❤️
