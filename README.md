@@ -1,18 +1,20 @@
-# 📡 The Scientist
+# ⭐ The Scientist
 
-A fully automated monthly newsletter that curates the top ML/AI papers for practitioners. Posted to Slack. Zero human input required after setup.
+> *Look at the stars... look how they shine for you.*
+
+A fully automated monthly newsletter that discovers and curates the brightest ML/AI papers for practitioners. Posted to Slack. Zero human input required after setup.
 
 ## How It Works
 
 ```
 LAYER 1: arXiv API + Semantic Scholar keyword search
-         (catches papers on known topics)
+         (illuminates papers on known topics)
                     +
 LAYER 2: Hugging Face Daily Papers API
-         (catches what ML community is excited about NOW)
+         (reveals what the ML community is excited about NOW)
                     +
 LAYER 3: Semantic Scholar Recommendations API
-         (seeded with 20 landmark papers — finds conceptually similar new work)
+         (seeded with 20 landmark papers — discovers conceptually similar new work)
                     ↓
          ~600-1000 candidates (deduplicated)
                     ↓
@@ -20,19 +22,19 @@ LAYER 3: Semantic Scholar Recommendations API
          (institutions, categories, key authors, HF upvotes, citations)
                     ↓
          Top 60 candidates → Claude API
-         (selects 12, ranks, writes practitioner summaries)
+         (selects 12 brightest, ranks, writes practitioner summaries)
                     ↓
          Formatted newsletter → Slack webhook
 ```
 
 ### Why 3 Layers?
 
-No single source is reliable alone:
+No single beacon reveals the whole sky:
 - **Keywords miss novelty** — "Transformers" wasn't a keyword before Transformers existed
 - **Social signals miss niche work** — important infra papers don't always trend on HF
 - **Recommendations miss unrelated breakthroughs** — only finds work similar to the canon
 
-Together they cover ~90-95% of what a human expert curator would pick.
+Together they uncover ~90-95% of what a human expert curator would spotlight.
 
 ## Setup (~15 minutes)
 
@@ -76,7 +78,7 @@ Repo → **Settings** → **Secrets and variables** → **Actions**:
 
 ## Customization
 
-All editorial decisions live in `sources.yaml`:
+Tune your observatory with `sources.yaml`:
 
 - `trusted_institutions` — orgs whose papers get a scoring boost
 - `key_authors` — individual researchers to track
