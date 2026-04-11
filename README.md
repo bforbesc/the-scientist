@@ -4,7 +4,31 @@
 
 A fully automated monthly newsletter that discovers and curates the brightest ML/AI papers for practitioners. Posted to Slack. Zero human input required after setup.
 
-**Why 3 layers?** No single signal is reliable alone. Keywords miss novelty ("Transformers" wasn't a keyword before it existed). HF trends miss niche infra work. Recommendations only find work similar to the canon. Together they catch ~90-95% of what a human expert would pick.
+## How It Works
+
+Every month, the pipeline does this:
+
+1. **Fetch from 3 sources** → ~600-1000 candidate papers from three independent sources (see below)
+2. **Pre-filter & score** → Remove low-quality papers, score by institution prestige, author reputation, citation velocity, community upvotes
+3. **Send top 60 to Claude** → Claude reads the candidates and selects the 12 most impactful, ranks them, writes 2-3 sentence summaries
+4. **Post to Slack** → Formatted newsletter with links and explanations
+
+### The 3 Sources
+
+| Source | What It Catches |
+|--------|-----------------|
+| **arXiv + Semantic Scholar keyword search** | Papers on topics you explicitly care about (ML, deep learning, agents, etc.) |
+| **Hugging Face Daily Papers** | Papers trending in the ML community right now (what practitioners are excited about) |
+| **Semantic Scholar Recommendations** | Papers conceptually similar to landmark papers (discovers related work you wouldn't think to search for) |
+
+### Why 3 Sources?
+
+No single source is complete:
+- **Keywords alone miss novelty** — "Transformers" wasn't a keyword before Transformers existed. New breakthroughs need novel terminology you can't predict.
+- **Community trends alone miss niche work** — Important infrastructure papers don't always trend on Hugging Face. Specialized research stays quiet.
+- **Recommendations alone miss unrelated breakthroughs** — You only find papers similar to what you already know about.
+
+**Together they catch ~90-95% of what a human expert curator would pick.**
 
 ## How It's Deployed
 
@@ -44,31 +68,7 @@ The pipeline will fetch ~600-1000 papers, rank them, and post to Slack.
 
 ## Customization
 
-Tune your observatory with `sources.yaml`:
-
-- `trusted_institutions` — orgs whose papers get a scoring boost
-- `key_authors` — individual researchers to track
-- `categories` — practitioner categories and their keywords
-- `search_queries` — Layer 1 keyword searches
-- `seed_papers` — Layer 3 landmark papers for recommendations
-- `venue_prestige` — how venues are scored
-- `newsletter.size` — papers per issue (default: 12)
-
-## Architecture
-
-**3-layer fetch → pre-filter → Claude ranks → Slack post**
-
-| Layer | Source | Why |
-|-------|--------|-----|
-| 1 | arXiv + Semantic Scholar keywords | Catches papers on known topics |
-| 2 | Hugging Face Daily Papers | Catches what practitioners care about NOW (social signal) |
-| 3 | S2 Recommendations (seeded) | Finds conceptually similar work that keywords miss |
-
-Deduped → scored by institution, authors, citations, velocity, HF upvotes → top 60 sent to Claude → Claude selects 12 best + ranks + summarizes → posted to Slack.
-
-## Customization
-
-All curated sources live in `sources.yaml`:
+All editorial decisions live in `sources.yaml`:
 - `trusted_institutions` — orgs that get a scoring boost
 - `key_authors` — researchers to always watch
 - `categories` — practitioner categories + keywords
