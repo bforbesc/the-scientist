@@ -36,3 +36,12 @@ jobs:
           name: newsletter-${{ github.run_id }}
           path: latest_issue.json
           retention-days: 90
+
+      - name: Notify Slack on failure
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          curl -s -X POST "$SLACK_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{"text": "⚠️ *The Scientist* pipeline failed. <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View logs>"}'
