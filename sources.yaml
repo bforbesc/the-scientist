@@ -265,5 +265,5 @@ newsletter:
   size: 12
   lookback_days: 35
   min_abstract_length: 100
-  model: "claude-sonnet-4-20250514"
+  model: "claude-sonnet-4-6"
   candidates_for_claude: 60

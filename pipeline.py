@@ -570,7 +570,7 @@ def post_to_slack(curation):
     log.info("=" * 60)
 
     blocks = [
-        {"type": "header", "text": {"type": "plain_text", "text": f"📡 The Scientist — {curation['month']}", "emoji": True}},
+        {"type": "header", "text": {"type": "plain_text", "text": f"⭐ The Scientist — {curation['month']}", "emoji": True}},
         {"type": "section", "text": {"type": "mrkdwn", "text": (
             f"_{curation.get('editorial_note', '')}_\n\n"
             f"Top {len(curation['papers'])} papers for ML engineers, data engineers & data scientists."
