@@ -238,26 +238,26 @@ search_queries:
 
 # ── 7. Seed Papers (Layer 3 — S2 Recommendations) ──────────────────
 seed_papers:
-  - "arxiv:1706.03762"   # Attention Is All You Need
-  - "arxiv:1810.04805"   # BERT
-  - "arxiv:2005.14165"   # GPT-3
-  - "arxiv:2005.11401"   # RAG
-  - "arxiv:2106.09685"   # LoRA
-  - "arxiv:2203.02155"   # InstructGPT / RLHF
-  - "arxiv:2205.14135"   # Flash Attention
-  - "arxiv:2302.13971"   # LLaMA
-  - "arxiv:2305.18290"   # DPO
-  - "arxiv:2401.04088"   # Mixtral
-  - "arxiv:2310.06770"   # SWE-bench
-  - "arxiv:2305.15334"   # Gorilla (tool use)
-  - "arxiv:2309.06180"   # vLLM / PagedAttention
-  - "arxiv:2310.03714"   # DSPy
-  - "arxiv:2212.08073"   # Constitutional AI
-  - "arxiv:2407.21783"   # Llama 3
-  - "arxiv:2405.04434"   # DeepSeek-V2
-  - "arxiv:2201.11903"   # Chain of Thought
-  - "arxiv:2210.03629"   # ReAct
-  - "arxiv:2302.04761"   # Toolformer
+  - "ArXiv:1706.03762"   # Attention Is All You Need
+  - "ArXiv:1810.04805"   # BERT
+  - "ArXiv:2005.14165"   # GPT-3
+  - "ArXiv:2005.11401"   # RAG
+  - "ArXiv:2106.09685"   # LoRA
+  - "ArXiv:2203.02155"   # InstructGPT / RLHF
+  - "ArXiv:2205.14135"   # Flash Attention
+  - "ArXiv:2302.13971"   # LLaMA
+  - "ArXiv:2305.18290"   # DPO
+  - "ArXiv:2401.04088"   # Mixtral
+  - "ArXiv:2310.06770"   # SWE-bench
+  - "ArXiv:2305.15334"   # Gorilla (tool use)
+  - "ArXiv:2309.06180"   # vLLM / PagedAttention
+  - "ArXiv:2310.03714"   # DSPy
+  - "ArXiv:2212.08073"   # Constitutional AI
+  - "ArXiv:2407.21783"   # Llama 3
+  - "ArXiv:2405.04434"   # DeepSeek-V2
+  - "ArXiv:2201.11903"   # Chain of Thought
+  - "ArXiv:2210.03629"   # ReAct
+  - "ArXiv:2302.04761"   # Toolformer
 
 # ── 8. Newsletter Settings ──────────────────────────────────────────
 newsletter:
