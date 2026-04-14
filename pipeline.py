@@ -66,10 +66,19 @@ S2_FIELDS = (
 
 # ─── HTTP Helpers ─────────────────────────────────────────────────────────────
 
-def http_get_json(url, headers=None):
-    req = urllib.request.Request(url, headers=headers or {})
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        return json.loads(resp.read().decode())
+def http_get_json(url, headers=None, retries=3):
+    for attempt in range(retries):
+        try:
+            req = urllib.request.Request(url, headers=headers or {})
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                return json.loads(resp.read().decode())
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and attempt < retries - 1:
+                wait = 15 * (attempt + 1)
+                log.warning(f"  429 rate limit, retrying in {wait}s...")
+                time.sleep(wait)
+            else:
+                raise
 
 def http_post_json(url, payload, headers=None):
     data = json.dumps(payload).encode()
@@ -135,8 +144,18 @@ def fetch_from_arxiv():
             f"&sortBy=submittedDate&sortOrder=descending&max_results=100"
         )
         try:
-            with urllib.request.urlopen(urllib.request.Request(url), timeout=30) as resp:
-                root = ET.fromstring(resp.read())
+            for attempt in range(3):
+                try:
+                    with urllib.request.urlopen(urllib.request.Request(url), timeout=30) as resp:
+                        root = ET.fromstring(resp.read())
+                    break
+                except urllib.error.HTTPError as e:
+                    if e.code == 429 and attempt < 2:
+                        wait = 30 * (attempt + 1)
+                        log.warning(f"  arXiv {cat} 429, retrying in {wait}s...")
+                        time.sleep(wait)
+                    else:
+                        raise
             count = 0
             for entry in root.findall("atom:entry", ns):
                 id_el = entry.find("atom:id", ns)
@@ -165,7 +184,7 @@ def fetch_from_arxiv():
             log.info(f"  arXiv {cat}: {count} papers")
         except Exception as e:
             log.warning(f"  arXiv {cat} failed: {e}")
-        time.sleep(3)  # arXiv rate limit: 3s between requests
+        time.sleep(10)  # arXiv rate limit: conservative delay for CI environments
 
     log.info(f"Layer 1b — arXiv: {len(papers)} unique papers")
     return papers
@@ -635,7 +654,7 @@ def post_to_slack(curation):
         blocks.append({"type": "divider"})
 
     blocks.append({"type": "context", "elements": [{"type": "mrkdwn", "text": (
-        f"Courtesy of @bforbesc · 🤖 Curated by Claude · Sources: arXiv + Semantic Scholar + HF Daily Papers + S2 Recommendations · "
+        f"Courtesy of @bforbesc · 🤖 Curated by Claude · Sources: arXiv + Semantic Scholar + HF Daily Papers · "
         f"{datetime.now().strftime('%Y-%m-%d')}"
     )}]})
 

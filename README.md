@@ -20,7 +20,7 @@ Every month, the pipeline does this:
 |--------|-----------------|
 | **arXiv + Semantic Scholar keyword search** | Papers on topics you explicitly care about (ML, deep learning, agents, etc.) |
 | **Hugging Face Daily Papers** | Papers trending in the ML community right now (what practitioners are excited about) |
-| **Semantic Scholar Recommendations** | Papers conceptually similar to your seed pool — a rolling 12-month window of papers Claude previously selected (self-updating) |
+| **Semantic Scholar Recommendations** | Papers conceptually similar to past issues — seeded by a self-updating rolling 12-month window of previously curated papers |
 
 ### Why 3 Sources?
 
