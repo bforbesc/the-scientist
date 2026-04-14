@@ -262,7 +262,7 @@ seed_papers:
 # ── 8. Newsletter Settings ──────────────────────────────────────────
 newsletter:
   name: "The Scientist"
-  size: 12
+  size: 10
   lookback_days: 35
   min_abstract_length: 100
   model: "claude-sonnet-4-6"

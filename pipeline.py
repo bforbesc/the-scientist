@@ -556,6 +556,51 @@ CANDIDATES:
 
     return curation
 
+# ─── Seed Update ─────────────────────────────────────────────────────────────
+
+def update_seed_papers(curation, max_seeds=120):
+    """
+    Append this month's curated papers to the seed list in sources.yaml.
+    Keeps a rolling window of max_seeds entries (oldest dropped first).
+    """
+    new_ids = []
+    for entry in curation.get("papers", []):
+        link = entry.get("link", "")
+        if "arxiv.org/abs/" in link:
+            arxiv_id = link.split("/abs/")[-1].strip()
+            if arxiv_id:
+                new_ids.append(f"ArXiv:{arxiv_id}")
+
+    if not new_ids:
+        log.warning("Seed update — no arXiv IDs found in curated papers, skipping")
+        return
+
+    config_path = Path(__file__).parent / "sources.yaml"
+    text = config_path.read_text()
+
+    # Extract current seed list
+    current_seeds = CONFIG.get("seed_papers", [])
+
+    # Merge: existing + new, deduplicated, then cap
+    seen = set(current_seeds)
+    for sid in new_ids:
+        if sid not in seen:
+            current_seeds.append(sid)
+            seen.add(sid)
+    current_seeds = current_seeds[-max_seeds:]  # rolling window: drop oldest
+
+    # Rewrite just the seed_papers block in the file
+    new_block = "seed_papers:\n" + "".join(f'  - "{sid}"\n' for sid in current_seeds)
+    import re
+    text = re.sub(
+        r"seed_papers:\n(?:  - \"[^\n]+\"\n)*",
+        new_block,
+        text,
+    )
+    config_path.write_text(text)
+    CONFIG["seed_papers"] = current_seeds
+    log.info(f"Seed update — {len(new_ids)} new seeds added, pool now {len(current_seeds)}/{max_seeds}")
+
 # ─── Step 4: Post to Slack ────────────────────────────────────────────────────
 
 CATEGORY_EMOJI = {
@@ -590,7 +635,7 @@ def post_to_slack(curation):
         blocks.append({"type": "divider"})
 
     blocks.append({"type": "context", "elements": [{"type": "mrkdwn", "text": (
-        f"🤖 Curated by Claude · Sources: arXiv + Semantic Scholar + HF Daily Papers + S2 Recommendations · "
+        f"Courtesy of @bforbesc · 🤖 Curated by Claude · Sources: arXiv + Semantic Scholar + HF Daily Papers + S2 Recommendations · "
         f"{datetime.now().strftime('%Y-%m-%d')}"
     )}]})
 
@@ -626,6 +671,9 @@ def main():
 
     # Step 4: Post to Slack
     post_to_slack(curation)
+
+    # Step 5: Update seed papers (rolling window)
+    update_seed_papers(curation)
 
     # Archive the issue
     output_path = Path(__file__).parent / "latest_issue.json"

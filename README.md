@@ -10,8 +10,9 @@ Every month, the pipeline does this:
 
 1. **Fetch from 3 sources** → ~600-1000 candidate papers from three independent sources (see below)
 2. **Pre-filter & score** → Remove low-quality papers, score by institution prestige, author reputation, citation velocity, community upvotes
-3. **Send top 60 to Claude** → Claude reads the candidates and selects the 12 most impactful, ranks them, writes 2-3 sentence summaries
+3. **Send top 60 to Claude** → Claude reads the candidates and selects the 10 most impactful, ranks them, writes 2-3 sentence summaries
 4. **Post to Slack** → Formatted newsletter with links and explanations
+5. **Update seed pool** → The 10 selected papers are added to the Layer 3 seed list, keeping a rolling 12-month window (120 papers max)
 
 ### The 3 Sources
 
@@ -19,7 +20,7 @@ Every month, the pipeline does this:
 |--------|-----------------|
 | **arXiv + Semantic Scholar keyword search** | Papers on topics you explicitly care about (ML, deep learning, agents, etc.) |
 | **Hugging Face Daily Papers** | Papers trending in the ML community right now (what practitioners are excited about) |
-| **Semantic Scholar Recommendations** | Papers conceptually similar to landmark papers (discovers related work you wouldn't think to search for) |
+| **Semantic Scholar Recommendations** | Papers conceptually similar to your seed pool — a rolling 12-month window of papers Claude previously selected (self-updating) |
 
 ### Why 3 Sources?
 
@@ -73,9 +74,9 @@ All editorial decisions live in `sources.yaml`:
 - `key_authors` — researchers to always watch
 - `categories` — practitioner categories + keywords
 - `search_queries` — Layer 1 keyword searches
-- `seed_papers` — Layer 3 landmark papers for recommendations
+- `seed_papers` — Layer 3 seed pool (auto-updated each run; rolling 120-paper window)
 - `venue_prestige` — how venues are scored
-- `newsletter.size` — papers per issue (default: 12)
+- `newsletter.size` — papers per issue (default: 10)
 
 ## Cost Per Run
 
