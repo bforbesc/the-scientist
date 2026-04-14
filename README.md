@@ -40,7 +40,8 @@ The workflow:
 2. Installs Python + dependencies
 3. Reads secrets from GitHub → env vars
 4. Runs `pipeline.py`
-5. Archives the newsletter to artifacts
+5. Commits updated `sources.yaml` (new seeds) back to the repo
+6. Archives `latest_issue.json` as a workflow artifact
 
 ## Setup
 
@@ -90,7 +91,7 @@ All editorial decisions live in `sources.yaml`:
 | `pipeline.py` | Core 3-layer pipeline + pre-filtering + Claude API call |
 | `sources.yaml` | All editorial decisions (institutions, authors, keywords, venues) |
 | `requirements.txt` | Just `pyyaml` |
-| `latest_issue.json` | Most recent newsletter (auto-generated) |
+| `latest_issue.json` | Most recent newsletter (gitignored locally; archived as GitHub Actions artifact) |
 | `.github/workflows/newsletter.yml` | Cron job + secrets injection |
 | `SOURCE_CURATION_ANALYSIS.md` | How the sources were chosen |
 
