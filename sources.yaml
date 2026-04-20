@@ -238,6 +238,36 @@ search_queries:
 
 # ── 7. Seed Papers (Layer 3 — S2 Recommendations) ──────────────────
 seed_papers:
+  - "ArXiv:1706.03762"
+  - "ArXiv:1810.04805"
+  - "ArXiv:2005.14165"
+  - "ArXiv:2005.11401"
+  - "ArXiv:2106.09685"
+  - "ArXiv:2203.02155"
+  - "ArXiv:2205.14135"
+  - "ArXiv:2302.13971"
+  - "ArXiv:2305.18290"
+  - "ArXiv:2401.04088"
+  - "ArXiv:2310.06770"
+  - "ArXiv:2305.15334"
+  - "ArXiv:2309.06180"
+  - "ArXiv:2310.03714"
+  - "ArXiv:2212.08073"
+  - "ArXiv:2407.21783"
+  - "ArXiv:2405.04434"
+  - "ArXiv:2201.11903"
+  - "ArXiv:2210.03629"
+  - "ArXiv:2302.04761"
+  - "ArXiv:2604.09852"
+  - "ArXiv:2604.07023"
+  - "ArXiv:2601.17855"
+  - "ArXiv:2604.15384"
+  - "ArXiv:2603.13026"
+  - "ArXiv:2602.11510"
+  - "ArXiv:2602.21233"
+  - "ArXiv:2603.17484"
+  - "ArXiv:2601.03986"
+  - "ArXiv:2604.14362"
   - "ArXiv:1706.03762"   # Attention Is All You Need
   - "ArXiv:1810.04805"   # BERT
   - "ArXiv:2005.14165"   # GPT-3
