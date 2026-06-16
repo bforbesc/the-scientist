@@ -6,21 +6,51 @@ A fully automated monthly newsletter that discovers and curates the brightest ML
 
 ## How It Works
 
-Every month, the pipeline does this:
+Every month, the pipeline runs these 5 steps:
 
-1. **Fetch from 3 sources** → ~600-1000 candidate papers from three independent sources (see below)
-2. **Pre-filter & score** → Remove low-quality papers, score by institution prestige, author reputation, citation velocity, community upvotes
-3. **Send top 60 to Claude** → Claude reads the candidates and selects the 10 most impactful, ranks them, writes 2-3 sentence summaries
-4. **Post to Slack** → Formatted newsletter with links and explanations
-5. **Update seed pool** → The 10 selected papers are added to the Layer 3 seed list, keeping a rolling 12-month window (120 papers max)
+### Step 1 — Cast a wide net (3 sources, last 35 days)
 
-### The 3 Sources
+Papers are pulled from three independent sources simultaneously:
 
-| Source | What It Catches |
-|--------|-----------------|
-| **arXiv + Semantic Scholar keyword search** | Papers on topics you explicitly care about (ML, deep learning, agents, etc.) |
-| **Hugging Face Daily Papers** | Papers trending in the ML community right now (what practitioners are excited about) |
-| **Semantic Scholar Recommendations** | Papers conceptually similar to past issues — seeded by a self-updating rolling 12-month window of previously curated papers |
+| Source | What It Catches | Coverage |
+|--------|-----------------|----------|
+| **arXiv + Semantic Scholar keyword search** | Papers matching topics you explicitly configured (e.g. "large language model inference optimization") | Configured in `sources.yaml` — edit to add/remove topics |
+| **Hugging Face Daily Papers** | Papers the ML community is actively upvoting right now — catches novelty that no keyword search would find | Fully dynamic — driven live by the HF community |
+| **Semantic Scholar Recommendations** | Papers conceptually similar to past curated issues — seeded by the rolling 120-paper history | Grows with every issue as new papers are added to the seed pool |
+
+> **Important limitation:** The keyword searches and topic categories are **frozen at setup time**. If a new paradigm emerges (e.g. "test-time compute scaling"), the pipeline will miss it via keyword search until you manually add it to `sources.yaml`. The only automatic safety nets are HF Daily Papers (catches community buzz on anything) and the seed recommendations (which gradually drift toward new areas as curated papers accumulate).
+
+### Step 2 — Score and shortlist (no AI — pure formula)
+
+Each paper gets a numeric score. Papers with no abstract, no keyword match, no known institution, no tracked author, and fewer than 5 HF upvotes are dropped. The rest are scored:
+
+| Signal | Weight | Why |
+|--------|--------|-----|
+| Citation velocity (citations ÷ age in months) | High | Fast-spreading papers are being noticed |
+| Influential citations | Medium | Counts only citations that themselves get cited |
+| Venue prestige (NeurIPS, ICML, etc.) | Medium | Peer-reviewed venues get a boost |
+| Known institution (Google, Meta, Anthropic, Stanford…) | Bonus +15 | Track record of impactful work |
+| Key author match | Bonus +10 | Researchers you've explicitly flagged |
+| Keyword category match | Bonus up to +12 | Relevance to your configured topics |
+| HF upvote count | Bonus up to +20 | Community excitement signal |
+
+The top 60 papers by score move to Step 3.
+
+### Step 3 — Claude picks the final 10
+
+Claude receives the 60 shortlisted papers (title, abstract, authors, citation stats, HF upvotes, institution) and is asked to select the 10 that practitioners **must** know about — ranked by practitioner impact, not academic novelty. Claude writes a 2–3 sentence summary and a "Why it matters" line for each.
+
+Papers are rejected if they are: pure theory with no path to practice, incremental niche benchmarks, from unknown groups with no traction, or too domain-specific.
+
+### Step 4 — Post to Slack
+
+The formatted newsletter is posted to your configured Slack channel with links, authors, venue, and summaries.
+
+### Step 5 — Update the seed pool (self-improving)
+
+The 10 selected papers are added to the Layer 3 seed list in `sources.yaml` and committed back to the repo. The pool is capped at 120 papers (oldest drop off). This means the recommendations engine gradually learns your editorial taste over time — without you touching anything.
+
+---
 
 ### Why 3 Sources?
 
